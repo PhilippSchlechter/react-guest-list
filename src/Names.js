@@ -5,6 +5,7 @@ export default function Names() {
     { id: 2, name: 'Sari' },
     { id: 3, name: 'Tamara' },
     { id: 4, name: 'Philipp' },
+    { id: 5, name: 'Bobby' },
   ];
 
   return (
