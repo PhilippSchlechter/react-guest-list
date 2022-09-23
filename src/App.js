@@ -2,9 +2,11 @@ import './App.css';
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
 import React, { useState } from 'react';
-import Names from './Names.js';
+import Guests from './Guests.js';
 
-const headerStyles = css``;
+const headerStyles = css`
+  margin-bottom: 200px;
+`;
 const inputStyles = css`
   background-color: aliceblue;
   margin: 3px;
@@ -25,45 +27,34 @@ const guestListStyles = css`
   justify-content: center;
   border: 5px solid black;
   border-radius: 7px;
-  width: 500px;
-  height: 900px;
+  width: 600px;
+  height: 1000px;
   margin: 0 auto;
 `;
 
 function App() {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    setFirstName(event.target[0].value);
-    setLastName(event.target[0].value);
-  };
-
   return (
     <div>
-      <header css={headerStyles}>
-        fh
-        <Names />
-      </header>
+      <header css={headerStyles}>ps.guest.list</header>
       <section>
-        <div>
-          First name
-          <form onSubmit={handleSubmit}>
-            <input css={inputStyles} />
-          </form>
-          Last name
-          <form onSubmit={handleSubmit}>
-            <input css={inputStyles} />
-          </form>
-        </div>
         <h1 css={h1Styles}>Guest List</h1>
         <div css={guestListStyles}>
-          <h3>
-            {firstName}
-            {lastName}
-          </h3>
+          <h4>
+            <Guests />
+          </h4>
         </div>
       </section>
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
     </div>
   );
 }
