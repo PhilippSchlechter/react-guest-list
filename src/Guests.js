@@ -20,7 +20,6 @@ export default function NamesList() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [guests, setGuests] = useState([]);
-  const [checkBoxValue, setCheckBoxValue] = useState(false);
 
   function handleChange1(event) {
     setFirstName(event.target.value);
@@ -28,27 +27,41 @@ export default function NamesList() {
   function handleChange2(event) {
     setLastName(event.target.value);
   }
-  function RemoveGuest() {
-    const newState = [...guests];
-    newState.shift();
-    setGuests(newState);
-  }
+  const newGuests = [
+    {
+      id: id,
+      firstName: firstName,
+      secondName: lastName,
+      attendance: false,
+    },
+    ...guests,
+  ];
   function handleSubmit(event) {
-    const newGuests = [
-      {
-        id: id,
-        firstName: firstName,
-        secondName: lastName,
-      },
-      ...guests,
-    ];
+    event.preventDefault();
+
     id++;
     setGuests(newGuests);
     setLastName('');
     setFirstName('');
-    event.preventDefault();
   }
+  function RemoveGuest() {
+    // add idd as parameter
+    const removeGuests = guests.filter((guest) => guest.id !== id);
+    setGuests(removeGuests);
+  }
+  function handleAttendanceChange(attendingEvent) {
+    // add idd as parameter
+    const guestAttending = guests.find((guest) => guest.id === id);
+    const updatedGuest = {
+      ...guestAttending,
+      attendance: (guestAttending.attendance = attendingEvent),
+    };
+    const allGuestsagain = [guests, updatedGuest];
+    setGuests(allGuestsagain);
+  }
+
   console.log(guests);
+
   return (
     <form onSubmit={handleSubmit}>
       <label>
@@ -71,12 +84,21 @@ export default function NamesList() {
           <div key={`guest-${guest.id}`}>
             {guest.firstName} {guest.secondName}
             <input
+              aria-label="attending"
               type="checkbox"
+              checked={guest.attendance}
               onChange={(event) =>
-                setCheckBoxValue(event.currentTarget.checked)
+                handleAttendanceChange(
+                  guest.attendance,
+                  event.currentTarget.checked,
+                )
               }
             />
-            <button css={buttonStyles} onClick={() => RemoveGuest()}>
+            <button
+              css={buttonStyles}
+              aria-label="Remove"
+              onClick={() => RemoveGuest(guest.id)}
+            >
               Remove
             </button>
           </div>
