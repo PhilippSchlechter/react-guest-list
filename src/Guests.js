@@ -1,8 +1,9 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-let id = 0;
+const baseUrl =
+  'https://express-guest-list-api-memory-data-store.philippschlech1.repl.co';
 
 const buttonStyles = css`
   border-radius: 1e9px;
@@ -16,10 +17,69 @@ const inputStyles = css`
   padding: 6px;
 `;
 
-export default function NamesList() {
+export default function GuestList() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [guests, setGuests] = useState([]);
+  const [pageLoading, setPageLoading] = useState(true);
+
+  async function getGuestsByApi() {
+    const response = await fetch(`${baseUrl}/guests`);
+    const guestsApi = await response.json();
+    setPageLoading(false);
+    setGuests(guestsApi);
+  }
+  useEffect(() => {
+    getGuestsByApi().catch(() => {});
+  }, []);
+
+  async function addGuestByApi() {
+    const response = await fetch(`${baseUrl}/guests`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        firstName: firstName,
+        lastName: lastName,
+      }),
+    });
+    const createdGuest = await response.json();
+    setGuests([...guests, createdGuest]);
+    setFirstName('');
+    setLastName('');
+  }
+
+  async function updateGuestByApi(id, boolean) {
+    const response = await fetch(`${baseUrl}/guests/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ attending: boolean }),
+    });
+    const updatedGuest = await response.json();
+    let checkBoxGuests = [...guests];
+    checkBoxGuests = checkBoxGuests.map((checkBoxGuest) => {
+      if (checkBoxGuest.id === id) {
+        return updatedGuest;
+      } else {
+        return checkBoxGuest;
+      }
+    });
+    setGuests(checkBoxGuests);
+  }
+
+  async function deleteGuestByApi(id) {
+    await fetch(`${baseUrl}/guests/${id}`, {
+      method: 'DELETE',
+    });
+    const deletedGuest = () => {
+      deleteGuestByApi().catch((error) => console.log(error));
+    };
+    setGuests(guests.filter((guest) => guest.id !== id));
+    console.log(deletedGuest);
+  }
 
   function handleChange1(event) {
     setFirstName(event.target.value);
@@ -27,83 +87,76 @@ export default function NamesList() {
   function handleChange2(event) {
     setLastName(event.target.value);
   }
-  const newGuests = [
-    {
-      id: id,
-      firstName: firstName,
-      secondName: lastName,
-      attendance: false,
-    },
-    ...guests,
-  ];
-  function handleSubmit(event) {
-    event.preventDefault();
 
-    id++;
-    setGuests(newGuests);
-    setLastName('');
-    setFirstName('');
-  }
-  function RemoveGuest() {
-    // add idd as parameter
-    const removeGuests = guests.filter((guest) => guest.id !== id);
-    setGuests(removeGuests);
-  }
-  function handleAttendanceChange(attendingEvent) {
-    // add idd as parameter
-    const guestAttending = guests.find((guest) => guest.id === id);
-    const updatedGuest = {
-      ...guestAttending,
-      attendance: (guestAttending.attendance = attendingEvent),
-    };
-    const allGuestsagain = [guests, updatedGuest];
-    setGuests(allGuestsagain);
-  }
-
-  console.log(guests);
+  console.log('guests', guests);
 
   return (
-    <form onSubmit={handleSubmit}>
-      <label>
-        First Name
-        <input css={inputStyles} onChange={handleChange1} value={firstName} />
-      </label>
-      <label>
-        Last Name
-        <input css={inputStyles} onChange={handleChange2} value={lastName} />
-      </label>
-      <button hidden>Add guest</button>
+    <div data-test-id="guest">
+      <form
+        onSubmit={(event) => {
+          event.preventDefault();
+          addGuestByApi().catch(() => {});
+          setLastName('');
+          setFirstName('');
+        }}
+      >
+        <label>
+          First name
+          <input
+            css={inputStyles}
+            onChange={handleChange1}
+            value={firstName}
+            disabled={pageLoading}
+          />
+        </label>
+        <label>
+          Last name
+          <input
+            css={inputStyles}
+            onChange={handleChange2}
+            value={lastName}
+            disabled={pageLoading}
+          />
+        </label>
+        <button hidden>Add guest</button>
 
-      <br />
-      <br />
-      <br />
-      <br />
-
-      {guests.map((guest) => {
-        return (
-          <div key={`guest-${guest.id}`}>
-            {guest.firstName} {guest.secondName}
-            <input
-              aria-label="attending"
-              type="checkbox"
-              checked={guest.attendance}
-              onChange={(event) =>
-                handleAttendanceChange(
-                  guest.attendance,
-                  event.currentTarget.checked,
-                )
-              }
-            />
-            <button
-              css={buttonStyles}
-              aria-label="Remove"
-              onClick={() => RemoveGuest(guest.id)}
-            >
-              Remove
-            </button>
-          </div>
-        );
-      })}
-    </form>
+        <br />
+        <br />
+        <br />
+        <br />
+      </form>
+      {pageLoading ? (
+        <p>Loading...</p>
+      ) : (
+        <div>
+          {guests.map((guest) => {
+            return (
+              <div key={`${guest.firstName}-${guest.lastName}-${guest.id}`}>
+                {guest.firstName} {guest.lastName}
+                <input
+                  aria-label={`${guest.firstName} ${guest.lastName}attending status`}
+                  type="checkbox"
+                  onChange={async (event) =>
+                    await updateGuestByApi(
+                      guest.id,
+                      event.currentTarget.checked,
+                    ).catch(() => {})
+                  }
+                  checked={guest.attending}
+                />
+                attending
+                <button
+                  css={buttonStyles}
+                  aria-label={`Remove ${guest.firstName} ${guest.lastName}`}
+                  onClick={() => deleteGuestByApi(guest.id).catch(() => {})}
+                >
+                  Remove
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
   );
 }
