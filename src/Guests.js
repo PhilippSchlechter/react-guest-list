@@ -95,7 +95,7 @@ export default function GuestList() {
   }
 
   return (
-    <div data-test-id="guest">
+    <div>
       <form
         onSubmit={(event) => {
           event.preventDefault();
