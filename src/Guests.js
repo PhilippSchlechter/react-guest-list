@@ -137,7 +137,10 @@ export default function GuestList() {
         <div>
           {guests.map((guest) => {
             return (
-              <div key={`${guest.firstName}-${guest.lastName}-${guest.id}`}>
+              <div
+                data-test-id="guest"
+                key={`${guest.firstName}-${guest.lastName}-${guest.id}`}
+              >
                 {guest.firstName} {guest.lastName}
                 <input
                   css={checkBoxStyles}
