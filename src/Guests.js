@@ -154,7 +154,6 @@ export default function GuestList() {
                   }
                   checked={guest.attending}
                 />
-                Attending
                 <button
                   css={buttonStyles}
                   aria-label={`Remove${guest.firstName} ${guest.lastName}`}
