@@ -149,10 +149,10 @@ export default function GuestList() {
                 Attending
                 <button
                   css={buttonStyles}
-                  aria-label={`Remove ${guest.firstName} ${guest.lastName}`}
+                  aria-label={`Remove${guest.firstName} ${guest.lastName}`}
                   onClick={() => deleteGuestByApi(guest.id).catch(() => {})}
                 >
-                  Remove
+                  Delete
                 </button>
               </div>
             );
