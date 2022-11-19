@@ -74,14 +74,14 @@ export default function GuestList() {
   }
 
   async function deleteGuestByApi(id) {
-    await fetch(`${baseUrl}/guests/${id}`, {
+    const response = await fetch(`${baseUrl}/guests/${id}`, {
       method: 'DELETE',
     });
-    const deletedGuest = () => {
-      deleteGuestByApi().catch((error) => console.log(error));
-    };
-    setGuests(guests.filter((guest) => guest.id !== id));
-    console.log(deletedGuest);
+    const removeGuest = await response.json();
+    const reducedGuestList = guests.filter(
+      (guest) => guest.id !== removeGuest.id,
+    );
+    setGuests(reducedGuestList);
   }
 
   function handleChange1(event) {
