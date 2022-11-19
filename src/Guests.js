@@ -6,15 +6,18 @@ const baseUrl =
   'https://express-guest-list-api-memory-data-store.philippschlech1.repl.co';
 
 const buttonStyles = css`
-  border-radius: 1e9px;
+  border-radius: 1e10px;
   color: black;
   background-color: #fff;
-  font-size: 12px;
-  margin: 20px;
+  font-size: 13px;
+  margin: 30px;
 `;
 const inputStyles = css`
   margin: 10px;
   padding: 6px;
+`;
+const checkBoxStyles = css`
+  margin-left: 50px;
 `;
 
 export default function GuestList() {
@@ -88,8 +91,6 @@ export default function GuestList() {
     setLastName(event.target.value);
   }
 
-  console.log('guests', guests);
-
   return (
     <div data-test-id="guest">
       <form
@@ -134,6 +135,7 @@ export default function GuestList() {
               <div key={`${guest.firstName}-${guest.lastName}-${guest.id}`}>
                 {guest.firstName} {guest.lastName}
                 <input
+                  css={checkBoxStyles}
                   aria-label={`${guest.firstName} ${guest.lastName}attending status`}
                   type="checkbox"
                   onChange={async (event) =>
@@ -144,7 +146,7 @@ export default function GuestList() {
                   }
                   checked={guest.attending}
                 />
-                attending
+                Attending
                 <button
                   css={buttonStyles}
                   aria-label={`Remove ${guest.firstName} ${guest.lastName}`}
