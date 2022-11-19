@@ -12,6 +12,9 @@ const buttonStyles = css`
   font-size: 13px;
   margin: 30px;
 `;
+const hiddenButtonStyle = css`
+  display: none;
+`;
 const inputStyles = css`
   margin: 10px;
   padding: 6px;
@@ -119,7 +122,9 @@ export default function GuestList() {
             disabled={pageLoading}
           />
         </label>
-        <button hidden>Add guest</button>
+        <button css={hiddenButtonStyle} hidden>
+          Add guest
+        </button>
 
         <br />
         <br />
